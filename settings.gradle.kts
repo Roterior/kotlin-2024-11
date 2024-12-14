@@ -8,3 +8,4 @@ pluginManagement {
 }
 
 include("m1l1-first")
+include("m1l2-basic")
