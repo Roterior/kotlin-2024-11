@@ -1,5 +1,9 @@
 package ru.otus.kotlin
 
 fun main() {
-    println("Hello World!")
+
+    var nullable = null
+    val what = nullable?.toDouble()
+    val test: String = "World!"
+    println("Hello $test")
 }
