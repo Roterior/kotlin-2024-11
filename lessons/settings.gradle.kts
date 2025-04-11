@@ -1,4 +1,4 @@
-rootProject.name = "otus-kotlin-2024-11"
+rootProject.name = "lessons"
 
 pluginManagement {
     plugins {
@@ -11,5 +11,6 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
-includeBuild("lessons")
-includeBuild("ok-gas-station-be")
+include("m1l1-first")
+include("m1l2-basic")
+include("m1l3-func")
