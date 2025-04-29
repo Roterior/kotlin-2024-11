@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
 }
 
-group = rootProject.group
-version = rootProject.version
+group = "ru.otus.otuskotlin.gasstation"
+version = "0.0.1"
 
 allprojects {
     repositories {
@@ -15,6 +15,12 @@ allprojects {
 subprojects {
     group = rootProject.group
     version = rootProject.version
+}
+
+ext {
+    val specDir = layout.projectDirectory.dir("../specs")
+    set("spec-v1", specDir.file("specs-order-v1.yaml").toString())
+    set("spec-v2", specDir.file("specs-order-v2.yaml").toString())
 }
 
 tasks {
