@@ -28,4 +28,8 @@ plugins {
 //implementation(projects.m2l5Gradle.sub1.ssub1)
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include(":ok-gas-station-tmp")
+//include(":ok-gas-station-tmp")
+include(":ok-gas-station-api-v1-jackson")
+include(":ok-gas-station-api-v1-mappers")
+include(":ok-gas-station-api-v2-kmp")
+include(":ok-gas-station-common")

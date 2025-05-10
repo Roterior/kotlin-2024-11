@@ -11,5 +11,5 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
-includeBuild("lessons")
+//includeBuild("lessons")
 includeBuild("ok-gas-station-be")

@@ -1,0 +1,398 @@
+openapi: 3.0.4
+info:
+  title: "Gas station ${VERSION_APP}"
+  description: Place to fuel your car
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/v1
+tags:
+  - name: order
+    description: Заказ топлива
+paths:
+  /order/create:
+    post:
+      tags:
+        - order
+      summary: Create order
+      operationId: orderCreate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreateResponse'
+  /order/read:
+    post:
+      tags:
+        - order
+      summary: Read order
+      operationId: orderRead
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderReadRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderReadResponse'
+  /order/update:
+    post:
+      tags:
+        - order
+      summary: Update order
+      operationId: orderUpdate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderUpdateResponse'
+  /order/delete:
+    post:
+      tags:
+        - order
+      summary: Delete order
+      operationId: orderDelete
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDeleteRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDeleteResponse'
+  /order/search:
+    post:
+      tags:
+        - order
+      summary: Search order
+      operationId: orderSearch
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderSearchRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderSearchResponse'
+
+components:
+  schemas:
+
+    IRequest:
+      type: object
+      description: Базовый интерфейс для всех запросов
+      properties:
+        requestType:
+          type: string
+          description: Поле-дескриминатор для вычисления типа запроса
+          example: create
+      discriminator:
+        propertyName: requestType
+        mapping:
+          create: '#/components/schemas/OrderCreateRequest'
+          read:   '#/components/schemas/OrderReadRequest'
+          update: '#/components/schemas/OrderUpdateRequest'
+          delete: '#/components/schemas/OrderDeleteRequest'
+          search: '#/components/schemas/OrderSearchRequest'
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        group:
+          type: string
+        field:
+          type: string
+        message:
+          type: string
+
+    ResponseResult:
+      type: string
+      enum:
+        - success
+        - error
+
+    IResponse:
+      type: object
+      description: Базовый интерфейс для всех ответов
+      properties:
+        responseType:
+          type: string
+          description: Поле-дескриминатор для вычисления типа запроса
+          example: create
+        result:
+          $ref: '#/components/schemas/ResponseResult'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+      discriminator:
+        propertyName: responseType
+        mapping:
+          create: '#/components/schemas/OrderCreateResponse'
+          read:   '#/components/schemas/OrderReadResponse'
+          update: '#/components/schemas/OrderUpdateResponse'
+          delete: '#/components/schemas/OrderDeleteResponse'
+          search: '#/components/schemas/OrderSearchResponse'
+
+    OrderId:
+      type: string
+      description: Идентификатор заказа
+    OrderLock:
+      type: string
+      description: Версия оптимистичной блокировки
+
+    BaseOrder:
+      type: object
+      description: Объект описывает свойства, одинаковые для create и update
+      properties:
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        gasType:
+          $ref: '#/components/schemas/GasType'
+        price:
+          type: number
+          format: float
+          minimum: 0
+          description: 'Цена за единицу'
+        quantity:
+          type: number
+          format: float
+          minimum: 0
+          description: 'Количество топлива'
+        summaryPrice:
+          type: number
+          format: float
+          minimum: 0
+          description: 'Общая сумма заказа'
+
+    OrderStatus:
+      type: string
+      description: 'Статус заказа'
+      enum:
+        - CREATED
+        - IN_PROCESS
+        - SUCCESS
+        - ERROR
+
+    GasType:
+      type: string
+      description: 'Вид топлива'
+      enum:
+        - AI_92
+        - AI_95
+        - AI_98
+        - AI_100
+        - DIESEL
+
+    OrderCreateObject:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrder'
+
+    OrderCreateRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/OrderRequestDebug'
+        - type: object
+          properties:
+            order:
+              $ref: '#/components/schemas/OrderCreateObject'
+
+    OrderReadObject:
+      allOf:
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/OrderId'
+
+    OrderReadRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/OrderRequestDebug'
+        - type: object
+          properties:
+            order:
+              $ref: '#/components/schemas/OrderReadObject'
+
+    OrderUpdateObject:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrder'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/OrderId'
+            lock:
+              $ref: '#/components/schemas/OrderLock'
+
+    OrderUpdateRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/OrderRequestDebug'
+        - type: object
+          properties:
+            order:
+              $ref: '#/components/schemas/OrderUpdateObject'
+
+    OrderDeleteObject:
+      allOf:
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/OrderId'
+            lock:
+              $ref: '#/components/schemas/OrderLock'
+
+    OrderDeleteRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/OrderRequestDebug'
+        - type: object
+          properties:
+            order:
+              $ref: '#/components/schemas/OrderDeleteObject'
+
+    OrderSearchFilter:
+      type: object
+      description: Набор фильтров для поиска
+      properties:
+        searchString:
+          type: string
+          description: Поисковая строка, которая будет искаться в заказах
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        gasType:
+          $ref: '#/components/schemas/GasType'
+
+    OrderSearchRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/OrderRequestDebug'
+        - type: object
+          properties:
+            orderFilter:
+              $ref: '#/components/schemas/OrderSearchFilter'
+
+    OrderResponseObject:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrder'
+        - type: object
+          description: Объект, который возвращается в ответе бэкенда
+          properties:
+            id:
+              $ref: '#/components/schemas/OrderId'
+            lock:
+              $ref: '#/components/schemas/OrderLock'
+
+    OrderResponseSingle:
+      allOf:
+        - type: object
+          description: Ответ с одним объектом заказа
+          properties:
+            order:
+              $ref: '#/components/schemas/OrderResponseObject'
+
+    OrderResponseMulti:
+      allOf:
+        - type: object
+          description: Список найденных объектов
+          properties:
+            orders:
+              type: array
+              items:
+                $ref: '#/components/schemas/OrderResponseObject'
+
+    OrderCreateResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/OrderResponseSingle'
+
+    OrderReadResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/OrderResponseSingle'
+
+    OrderUpdateResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/OrderResponseSingle'
+
+    OrderDeleteResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/OrderResponseSingle'
+
+    OrderSearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/OrderResponseMulti'
+
+    # STUBS ======================
+    OrderRequestDebugMode:
+      type: string
+      enum:
+        - prod
+        - test
+        - stub
+
+    OrderRequestDebug:
+      type: object
+      properties:
+        debug:
+          $ref: '#/components/schemas/OrderDebug'
+
+    OrderDebug:
+      type: object
+      properties:
+        mode:
+          $ref: '#/components/schemas/OrderRequestDebugMode'
+        stub:
+          $ref: '#/components/schemas/OrderRequestDebugStubs'
+
+    OrderRequestDebugStubs:
+      type: string
+      description: Перечисления всех стабов
+      enum:
+        - success
+        - notFound
+        - badId
+        - cannotDelete
+        - badSearchString
