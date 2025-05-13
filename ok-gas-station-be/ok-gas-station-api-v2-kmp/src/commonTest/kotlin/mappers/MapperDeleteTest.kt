@@ -71,7 +71,7 @@ class MapperDeleteTest {
             state = GsStState.RUNNING
         )
 
-        val req = context.toTransportAd() as OrderDeleteResponse
+        val req = context.toTransportOrder() as OrderDeleteResponse
 
         assertEquals("1", req.order?.id)
         assertEquals("2", req.order?.lock)

@@ -1,0 +1,102 @@
+openapi: 3.0.4
+info:
+  title: Gas station log models
+  description: Log models for logging services of gas station
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+paths: {}
+
+components:
+  schemas:
+    CommonLogModel:
+      title: Общая модель лога
+      description: Общая модель лога для всех микросервисов системы
+      type: object
+      properties:
+        messageTime:
+          type: string
+        logId:
+          type: string
+        source:
+          type: string
+        order:
+          $ref: '#/components/schemas/GsStLogModel'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorLogModel'
+
+    GsStLogModel:
+      title: Модель лога для микросервиса GasStation
+      type: object
+      properties:
+        requestId:
+          type: string
+        operation:
+          $ref: '#/components/schemas/GsStLogOperation'
+        requestOrder:
+          $ref: '#/components/schemas/OrderLog'
+        requestFilter:
+          $ref: '#/components/schemas/OrderFilterLog'
+        responseOrder:
+          $ref: '#/components/schemas/OrderLog'
+        responseOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLog'
+
+    GsStLogOperation:
+      type: string
+      enum:
+        - create
+        - read
+        - update
+        - delete
+        - search
+        - offers
+        - init
+        - finish
+
+    ErrorLogModel:
+      title: Модель лога для ошибки
+      type: object
+      properties:
+        message:
+          type: string
+        field:
+          type: string
+        code:
+          type: string
+        level:
+          type: string
+        exception:
+          type: string
+
+    OrderLog:
+      title: Модель лога для заказа
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        gasType:
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        summaryPrice:
+          type: string
+
+    OrderFilterLog:
+      title: Модель лога фильтра
+      properties:
+        searchString:
+          type: string
+        status:
+          type: string
+        gasType:
+          type: string

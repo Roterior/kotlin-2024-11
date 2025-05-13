@@ -82,7 +82,7 @@ class MapperUpdateTest {
             state = GsStState.RUNNING
         )
 
-        val req = context.toTransportAd() as OrderUpdateResponse
+        val req = context.toTransportOrder() as OrderUpdateResponse
 
         assertEquals("1", req.order?.id)
         assertEquals("2", req.order?.lock)
