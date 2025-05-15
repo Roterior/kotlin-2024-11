@@ -12,6 +12,7 @@ kotlin {
                 api(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.coroutines.core)
                 api("ru.otus.otuskotlin.gasstation.libs:ok-gas-station-lib-logging-common")
             }
         }
