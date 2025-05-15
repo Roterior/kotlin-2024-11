@@ -74,7 +74,7 @@ class MapperCreateTest {
             state = GsStState.RUNNING
         )
 
-        val req = context.toTransportAd() as OrderCreateResponse
+        val req = context.toTransportOrder() as OrderCreateResponse
 
         assertEquals(OrderStatus.CREATED, req.order?.status)
         assertEquals(GasType.AI_95, req.order?.gasType)

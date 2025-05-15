@@ -24,12 +24,15 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
-// Включает вот такую конструкцию
-//implementation(projects.m2l5Gradle.sub1.ssub1)
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-//include(":ok-gas-station-tmp")
 include(":ok-gas-station-api-v1-jackson")
 include(":ok-gas-station-api-v1-mappers")
 include(":ok-gas-station-api-v2-kmp")
+include(":ok-gas-station-api-log1")
 include(":ok-gas-station-common")
+include(":ok-gas-station-biz")
+include(":ok-gas-station-stubs")
+include(":ok-gas-station-app-common")
+include(":ok-gas-station-app-spring")
+include(":ok-gas-station-app-kafka")

@@ -22,7 +22,7 @@ import ru.otus.otuskotlin.gasstation.common.models.GsStOrderLock
 import ru.otus.otuskotlin.gasstation.common.models.GsStState
 import ru.otus.otuskotlin.gasstation.common.models.GsStStatus
 
-fun GsStContext.toTransportAd(): IResponse = when (val cmd = command) {
+fun GsStContext.toTransportOrder(): IResponse = when (val cmd = command) {
     GsStCommand.CREATE -> toTransportCreate()
     GsStCommand.READ -> toTransportRead()
     GsStCommand.UPDATE -> toTransportUpdate()
@@ -95,11 +95,11 @@ private fun GsStGasType.toTransportOrder(): GasType? = when (this) {
 }
 
 private fun List<GsStError>.toTransportErrors(): List<Error>? = this
-    .map { it.toTransportAd() }
+    .map { it.toTransportOrder() }
     .toList()
     .takeIf { it.isNotEmpty() }
 
-private fun GsStError.toTransportAd() = Error(
+private fun GsStError.toTransportOrder() = Error(
     code = code.takeIf { it.isNotBlank() },
     group = group.takeIf { it.isNotBlank() },
     field = field.takeIf { it.isNotBlank() },
