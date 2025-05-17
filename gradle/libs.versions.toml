@@ -15,7 +15,12 @@ logback = "1.5.3"
 
 spring-boot = "3.4.3"
 
+testcontainers = "1.19.7"
+
+exposed = "0.50.0"
+
 muschko = "9.4.0"
+
 # BASE
 jvm-compiler = "17"
 jvm-language = "21"
@@ -32,6 +37,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "coroutines" }
 coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive", version.ref = "coroutines" }
 cor = { module = "ru.otus.otuskotlin.gasstation.libs:ok-gas-station-lib-cor" }
+uuid = "com.benasher44:uuid:0.8.4"
 
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-datatype = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
@@ -48,9 +54,20 @@ spring-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 
 kafka-client = { module = "org.apache.kafka:kafka-clients", version = "3.7.0" }
 
+db-cache4k = "io.github.reactivecircus.cache4k:cache4k:0.13.0"
+db-postgres = "org.postgresql:postgresql:42.7.3"
+db-exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+db-exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+db-exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.2.1" }
 
 gsst-logs-logback = { module = "ru.otus.otuskotlin.gasstation.libs:ok-gas-station-lib-logging-logback", version.ref = "gsst" }
+
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+
+[bundles]
+exposed = ["db-exposed-core", "db-exposed-dao", "db-exposed-jdbc"]
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -65,3 +82,4 @@ spring-dependencies = { id = "io.spring.dependency-management", version = "1.1.7
 spring-kotlin = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 
 muschko-java = { id = "com.bmuschko.docker-java-application", version.ref = "muschko" }
+palantir-docker = "com.palantir.docker:0.36.0"

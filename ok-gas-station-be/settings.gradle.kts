@@ -33,6 +33,13 @@ include(":ok-gas-station-api-log1")
 include(":ok-gas-station-common")
 include(":ok-gas-station-biz")
 include(":ok-gas-station-stubs")
+
 include(":ok-gas-station-app-common")
 include(":ok-gas-station-app-spring")
 include(":ok-gas-station-app-kafka")
+
+include(":ok-gas-station-repo-common")
+include(":ok-gas-station-repo-inmemory")
+include(":ok-gas-station-repo-stubs")
+include(":ok-gas-station-repo-tests")
+include(":ok-gas-station-repo-pg")

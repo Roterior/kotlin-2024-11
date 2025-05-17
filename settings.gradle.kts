@@ -14,3 +14,4 @@ plugins {
 //includeBuild("lessons")
 includeBuild("ok-gas-station-be")
 includeBuild("ok-gas-station-libs")
+includeBuild("ok-gas-station-other")

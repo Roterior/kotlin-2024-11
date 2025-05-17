@@ -19,8 +19,15 @@ fun Throwable.asGsStError(
 
 inline fun GsStContext.addError(vararg error: GsStError) = errors.addAll(error)
 
+inline fun GsStContext.addErrors(error: Collection<GsStError>) = errors.addAll(error)
+
 inline fun GsStContext.fail(error: GsStError) {
     addError(error)
+    state = GsStState.FAILING
+}
+
+inline fun GsStContext.fail(errors: Collection<GsStError>) {
+    addErrors(errors)
     state = GsStState.FAILING
 }
 
@@ -39,4 +46,16 @@ inline fun errorValidation(
     group = "validation",
     message = "Validation error for field $field: $description",
     level = level,
+)
+
+inline fun errorSystem(
+    violationCode: String,
+    level: LogLevel = LogLevel.ERROR,
+    e: Throwable,
+) = GsStError(
+    code = "system-$violationCode",
+    group = "system",
+    message = "System error occurred. Our stuff has been informed, please retry later",
+    level = level,
+    exception = e,
 )
