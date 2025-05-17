@@ -6,5 +6,6 @@ enum class GsStStubs {
     NOT_FOUND,
     BAD_ID,
     CANNOT_DELETE,
-    BAD_SEARCH_STRING
+    BAD_SEARCH_STRING,
+    DB_ERROR
 }

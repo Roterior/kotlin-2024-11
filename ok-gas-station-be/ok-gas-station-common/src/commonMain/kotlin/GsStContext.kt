@@ -15,6 +15,7 @@ data class GsStContext(
     var state: GsStState = GsStState.NONE,
     val errors: MutableList<GsStError> = mutableListOf(),
 
+    var corSettings: GsStCorSettings = GsStCorSettings(),
     var workMode: GsStWorkMode = GsStWorkMode.PROD,
     var stubCase: GsStStubs = GsStStubs.NONE,
 
@@ -22,6 +23,11 @@ data class GsStContext(
     var timeStart: Instant = Instant.NONE,
     var orderRequest: GsStOrder = GsStOrder(),
     var orderFilterRequest: GsStOrderFilter = GsStOrderFilter(),
+
+    var orderValidating: GsStOrder = GsStOrder(),
+    var orderFilterValidating: GsStOrderFilter = GsStOrderFilter(),
+    var orderValidated: GsStOrder = GsStOrder(),
+    var orderFilterValidated: GsStOrderFilter = GsStOrderFilter(),
 
     var orderResponse: GsStOrder = GsStOrder(),
     var ordersResponse: MutableList<GsStOrder> = mutableListOf()

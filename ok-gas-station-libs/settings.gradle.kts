@@ -26,3 +26,4 @@ plugins {
 
 include(":ok-gas-station-lib-logging-common")
 include(":ok-gas-station-lib-logging-logback")
+include(":ok-gas-station-lib-cor")
