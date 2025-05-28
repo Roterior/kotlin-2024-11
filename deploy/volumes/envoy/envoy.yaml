@@ -75,7 +75,7 @@ static_resources:
                   address:
                     socket_address:
                       address: app
-                      port_value: 8080
+                      port_value: 8081
 
     - name: keycloak
       connect_timeout: 0.25s
