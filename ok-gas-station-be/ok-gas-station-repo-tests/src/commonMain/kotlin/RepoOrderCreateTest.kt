@@ -9,7 +9,7 @@ import kotlin.test.*
 abstract class RepoOrderCreateTest {
 
     abstract val repo: OrderRepoInitialized
-    protected open val lockNew = GsStOrderLock("20000000-0000-0000-0000-000000000002")
+    protected open val lockNew = GsStOrderLock("1")
 
     private val createObj = GsStOrder(
         status = GsStStatus.CREATED,

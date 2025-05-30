@@ -29,13 +29,13 @@ class OrderTable(tableName: String) : Table(tableName) {
         lock = GsStOrderLock(res[lock])
     )
 
-    fun to(it: UpdateBuilder<*>, order: GsStOrder, randomUuid: () -> String) {
+    fun to(it: UpdateBuilder<*>, order: GsStOrder, randomUuid: () -> String, lockUuid: () -> String) {
         it[id] = order.id.takeIf { it != GsStOrderId.NONE }?.asString() ?: randomUuid()
         it[status] = order.status
         it[gasType] = order.gasType
         it[price] = order.price.toString()
         it[quantity] = order.quantity.toString()
         it[summaryPrice] = order.summaryPrice.toString()
-        it[lock] = order.lock.takeIf { it != GsStOrderLock.NONE }?.asString() ?: randomUuid()
+        it[lock] = order.lock.takeIf { it != GsStOrderLock.NONE }?.asString() ?: lockUuid()
     }
 }

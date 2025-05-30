@@ -108,7 +108,9 @@ fun GsStContext.fromTransport(request: OrderSearchRequest) {
 }
 
 private fun OrderSearchFilter?.toInternal(): GsStOrderFilter = GsStOrderFilter(
-    searchString = this?.searchString ?: ""
+    searchString = this?.searchString ?: "",
+    status = this?.status.fromTransport(),
+    gasType = this?.gasType.fromTransport()
 )
 
 private fun OrderCreateObject.toInternal(): GsStOrder = GsStOrder(

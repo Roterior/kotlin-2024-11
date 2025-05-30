@@ -28,3 +28,16 @@ springdoc:
         url: specs-order-v1.yaml
       - name: v2
         url: specs-order-v2.yaml
+
+gasstation:
+  repository:
+    test: "inmemory"
+    prod: "inmemory"
+
+psql:
+  schema: public
+  database: "gasstation_orders"
+  host: "postgres"
+  port: "5432"
+  user: "postgres"
+  password: "gasstation-pass"

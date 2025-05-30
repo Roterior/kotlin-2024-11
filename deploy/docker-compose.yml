@@ -4,9 +4,44 @@ services:
     build:
       context: ..
       dockerfile: deploy/app/Dockerfile
+    depends_on:
+      envoy:
+        condition: service_started
+      fluent-bit:
+        condition: service_started
+      liquibase:
+        condition: service_completed_successfully
+  postgres:
+    container_name: postgres
+    image: postgres:17.5
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: gasstation_orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: gasstation-pass
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase:4.32.0
+    volumes:
+      - ../ok-gas-station-other/ok-gas-station-migration-pg/src/main/liquibase:/liquibase/changelog
+    command: [ "--defaults-file=/liquibase/changelog/liquibase.properties", "--search-path=/liquibase/changelog/changelog", "--url=jdbc:postgresql://postgres:5432/gasstation_orders", "update" ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "liquibase", "--defaults-file=/liquibase/changelog/liquibase.properties", "--search-path=/liquibase/changelog/changelog", "--url=jdbc:postgresql://postgres:5432/gasstation_orders", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   fluent-bit:
     container_name: fluent-bit
-    image: fluent/fluent-bit
+    image: fluent/fluent-bit:4.0.0
     ports:
       - "24224:24224"
       - "24224:24224/udp"
@@ -20,7 +55,7 @@ services:
       - ./volumes/fluent-bit-etc/parsers.conf:/fluent-bit/etc/parsers.conf
   opensearch:
     container_name: opensearch
-    image: opensearchproject/opensearch:latest
+    image: opensearchproject/opensearch:2.19.1
     environment:
       - discovery.type=single-node
       - http.port=9200
@@ -47,7 +82,7 @@ services:
         soft: 65536
         hard: 65536
   dashboards:
-    image: opensearchproject/opensearch-dashboards:latest
+    image: opensearchproject/opensearch-dashboards:2.19.1
     container_name: opensearch-dashboards
     ports:
       - 5601:5601

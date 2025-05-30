@@ -1,7 +1,7 @@
 package ru.otus.otuskotlin.gasstation.backend.repo.postgresql
 
 data class SqlProperties(
-    val host: String = "localhost",
+    val host: String = "postgres",
     val port: Int = 5432,
     val user: String = "postgres",
     val password: String = "gasstation-pass",

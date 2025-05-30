@@ -8,6 +8,7 @@ import ru.otus.otuskotlin.gasstation.common.models.GsStOrderFilter
 import ru.otus.otuskotlin.gasstation.common.models.GsStRequestId
 import ru.otus.otuskotlin.gasstation.common.models.GsStState
 import ru.otus.otuskotlin.gasstation.common.models.GsStWorkMode
+import ru.otus.otuskotlin.gasstation.common.repo.IRepoOrder
 import ru.otus.otuskotlin.gasstation.common.stubs.GsStStubs
 
 data class GsStContext(
@@ -28,6 +29,12 @@ data class GsStContext(
     var orderFilterValidating: GsStOrderFilter = GsStOrderFilter(),
     var orderValidated: GsStOrder = GsStOrder(),
     var orderFilterValidated: GsStOrderFilter = GsStOrderFilter(),
+
+    var orderRepo: IRepoOrder = IRepoOrder.NONE,
+    var orderRepoRead: GsStOrder = GsStOrder(), // То, что прочитали из репозитория
+    var orderRepoPrepare: GsStOrder = GsStOrder(), // То, что готовим для сохранения в БД
+    var orderRepoDone: GsStOrder = GsStOrder(),  // Результат, полученный из БД
+    var ordersRepoDone: MutableList<GsStOrder> = mutableListOf(),
 
     var orderResponse: GsStOrder = GsStOrder(),
     var ordersResponse: MutableList<GsStOrder> = mutableListOf()

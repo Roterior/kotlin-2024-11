@@ -1,13 +1,19 @@
 package ru.otus.otuskotlin.gasstation.biz
 
-import ru.otus.otuskotlin.gasstation.common.GsStContext
-import ru.otus.otuskotlin.gasstation.common.GsStCorSettings
-import ru.otus.otuskotlin.gasstation.common.models.GsStGasType
-import ru.otus.otuskotlin.gasstation.common.models.GsStState
-import ru.otus.otuskotlin.gasstation.stubs.GsStOrderStub
 import ru.otus.otuskotlin.gasstation.biz.general.initStatus
 import ru.otus.otuskotlin.gasstation.biz.general.operation
 import ru.otus.otuskotlin.gasstation.biz.general.stubs
+import ru.otus.otuskotlin.gasstation.biz.repo.checkLock
+import ru.otus.otuskotlin.gasstation.biz.repo.initRepo
+import ru.otus.otuskotlin.gasstation.biz.repo.prepareResult
+import ru.otus.otuskotlin.gasstation.biz.repo.repoCreate
+import ru.otus.otuskotlin.gasstation.biz.repo.repoDelete
+import ru.otus.otuskotlin.gasstation.biz.repo.repoPrepareCreate
+import ru.otus.otuskotlin.gasstation.biz.repo.repoPrepareDelete
+import ru.otus.otuskotlin.gasstation.biz.repo.repoPrepareUpdate
+import ru.otus.otuskotlin.gasstation.biz.repo.repoRead
+import ru.otus.otuskotlin.gasstation.biz.repo.repoSearch
+import ru.otus.otuskotlin.gasstation.biz.repo.repoUpdate
 import ru.otus.otuskotlin.gasstation.biz.stubs.stubCreateSuccess
 import ru.otus.otuskotlin.gasstation.biz.stubs.stubDbError
 import ru.otus.otuskotlin.gasstation.biz.stubs.stubDeleteSuccess
@@ -24,9 +30,13 @@ import ru.otus.otuskotlin.gasstation.biz.validation.validateLockNotEmpty
 import ru.otus.otuskotlin.gasstation.biz.validation.validateLockProperFormat
 import ru.otus.otuskotlin.gasstation.biz.validation.validateSearchStringLength
 import ru.otus.otuskotlin.gasstation.biz.validation.validation
+import ru.otus.otuskotlin.gasstation.common.GsStContext
+import ru.otus.otuskotlin.gasstation.common.GsStCorSettings
 import ru.otus.otuskotlin.gasstation.common.models.GsStCommand
 import ru.otus.otuskotlin.gasstation.common.models.GsStOrderId
 import ru.otus.otuskotlin.gasstation.common.models.GsStOrderLock
+import ru.otus.otuskotlin.gasstation.common.models.GsStState
+import ru.otus.otuskotlin.gasstation.cor.chain
 import ru.otus.otuskotlin.gasstation.cor.rootChain
 import ru.otus.otuskotlin.gasstation.cor.worker
 
@@ -36,6 +46,7 @@ class GsStOrderProcessor(val corSettings: GsStCorSettings = GsStCorSettings.NONE
 
     private val businessChain = rootChain<GsStContext> {
         initStatus("Инициализация статуса")
+        initRepo("Инициализация репозитория")
 
         operation("Создание заказа", GsStCommand.CREATE) {
             stubs("Обработка стабов") {
@@ -49,6 +60,12 @@ class GsStOrderProcessor(val corSettings: GsStCorSettings = GsStCorSettings.NONE
 
                 finishOrderValidation("Успешное завершение процедуры валидации")
             }
+            chain {
+                title = "Логика сохранения"
+                repoPrepareCreate("Подготовка объекта для сохранения")
+                repoCreate("Создание заказа в БД")
+            }
+            prepareResult("Подготовка ответа")
         }
         operation("Получить заказ", GsStCommand.READ) {
             stubs("Обработка стабов") {
@@ -65,6 +82,16 @@ class GsStOrderProcessor(val corSettings: GsStCorSettings = GsStCorSettings.NONE
 
                 finishOrderValidation("Успешное завершение процедуры валидации")
             }
+            chain {
+                title = "Логика чтения"
+                repoRead("Чтение заказа из БД")
+                worker {
+                    title = "Подготовка ответа для Read"
+                    on { state == GsStState.RUNNING }
+                    handle { orderRepoDone = orderRepoRead }
+                }
+            }
+            prepareResult("Подготовка ответа")
         }
         operation("Изменить заказ", GsStCommand.UPDATE) {
             stubs("Обработка стабов") {
@@ -84,6 +111,14 @@ class GsStOrderProcessor(val corSettings: GsStCorSettings = GsStCorSettings.NONE
 
                 finishOrderValidation("Успешное завершение процедуры валидации")
             }
+            chain {
+                title = "Логика сохранения"
+                repoRead("Чтение заказа из БД")
+                checkLock("Проверяем консистентность по оптимистичной блокировке")
+                repoPrepareUpdate("Подготовка объекта для заказа")
+                repoUpdate("Обновление заказа в БД")
+            }
+            prepareResult("Подготовка ответа")
         }
         operation("Удалить заказ", GsStCommand.DELETE) {
             stubs("Обработка стабов") {
@@ -105,6 +140,14 @@ class GsStOrderProcessor(val corSettings: GsStCorSettings = GsStCorSettings.NONE
 
                 finishOrderValidation("Успешное завершение процедуры валидации")
             }
+            chain {
+                title = "Логика удаления"
+                repoRead("Чтение заказа из БД")
+                checkLock("Проверяем консистентность по оптимистичной блокировке")
+                repoPrepareDelete("Подготовка объекта для удаления")
+                repoDelete("Удаление заказа из БД")
+            }
+            prepareResult("Подготовка ответа")
         }
         operation("Поиск заказов", GsStCommand.SEARCH) {
             stubs("Обработка стабов") {
@@ -119,6 +162,8 @@ class GsStOrderProcessor(val corSettings: GsStCorSettings = GsStCorSettings.NONE
 
                 finishOrderFilterValidation("Успешное завершение процедуры валидации")
             }
+            repoSearch("Поиск заказа в БД по фильтру")
+            prepareResult("Подготовка ответа")
         }
     }.build()
 }

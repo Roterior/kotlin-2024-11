@@ -47,7 +47,8 @@ class OrderRepoInMemory(
 
     override suspend fun createOrder(rq: DbOrderRequest): IDbOrderResponse = tryOrderMethod {
         val key = randomUuid()
-        val order = rq.order.copy(id = GsStOrderId(key), lock = GsStOrderLock(randomUuid()))
+//        val order = rq.order.copy(id = GsStOrderId(key), lock = GsStOrderLock(randomUuid()))
+        val order = rq.order.copy(id = GsStOrderId(key), lock = GsStOrderLock("1"))
         val entity = OrderEntity(order)
         mutex.withLock {
             cache.put(key, entity)
@@ -78,7 +79,8 @@ class OrderRepoInMemory(
                 oldOrder.lock == GsStOrderLock.NONE -> errorDb(RepoEmptyLockException(id))
                 oldOrder.lock != oldLock -> errorRepoConcurrency(oldOrder, oldLock)
                 else -> {
-                    val newOrder = rqOrder.copy(lock = GsStOrderLock(randomUuid()))
+//                    val newOrder = rqOrder.copy(lock = GsStOrderLock(randomUuid()))
+                    val newOrder = rqOrder.copy(lock = GsStOrderLock("1"))
                     val entity = OrderEntity(newOrder)
                     cache.put(key, entity)
                     DbOrderResponseOk(newOrder)

@@ -1,67 +1,54 @@
 package ru.otus.otuskotlin.gasstation.biz.validation
 
-import kotlinx.coroutines.test.runTest
 import ru.otus.otuskotlin.gasstation.biz.GsStOrderProcessor
 import ru.otus.otuskotlin.gasstation.common.GsStContext
-import ru.otus.otuskotlin.gasstation.common.models.*
+import ru.otus.otuskotlin.gasstation.common.models.GsStCommand
+import ru.otus.otuskotlin.gasstation.common.models.GsStGasType
+import ru.otus.otuskotlin.gasstation.common.models.GsStOrder
+import ru.otus.otuskotlin.gasstation.common.models.GsStOrderId
+import ru.otus.otuskotlin.gasstation.common.models.GsStOrderLock
+import ru.otus.otuskotlin.gasstation.common.models.GsStState
+import ru.otus.otuskotlin.gasstation.common.models.GsStStatus
+import ru.otus.otuskotlin.gasstation.common.models.GsStWorkMode
+import ru.otus.otuskotlin.gasstation.stubs.GsStOrderStub
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-fun validationLockCorrect(command: GsStCommand, processor: GsStOrderProcessor) = runTest {
+fun validationLockCorrect(command: GsStCommand, processor: GsStOrderProcessor) = runBizTest {
     val ctx = GsStContext(
         command = command,
         state = GsStState.NONE,
         workMode = GsStWorkMode.TEST,
-        orderRequest = GsStOrder(
-            id = GsStOrderId("123-234-abc-ABC"),
-            status = GsStStatus.CREATED,
-            gasType = GsStGasType.AI_92,
-            price = 10f,
-            quantity = 2f,
-            summaryPrice = 20f,
-            lock = GsStOrderLock("123-234-abc-ABC")
-        )
+        orderRequest = GsStOrderStub.get()
     )
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
     assertNotEquals(GsStState.FAILING, ctx.state)
 }
 
-fun validationLockTrim(command: GsStCommand, processor: GsStOrderProcessor) = runTest {
+fun validationLockTrim(command: GsStCommand, processor: GsStOrderProcessor) = runBizTest {
     val ctx = GsStContext(
         command = command,
         state = GsStState.NONE,
         workMode = GsStWorkMode.TEST,
-        orderRequest = GsStOrder(
-            id = GsStOrderId("123-234-abc-ABC"),
-            status = GsStStatus.CREATED,
-            gasType = GsStGasType.AI_92,
-            price = 10f,
-            quantity = 2f,
-            summaryPrice = 20f,
-            lock = GsStOrderLock(" \n\t 123-234-abc-ABC \n\t ")
-        )
+        orderRequest = GsStOrderStub.prepareResult {
+            lock = GsStOrderLock(" \n\t 1 \n\t ")
+        }
     )
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
     assertNotEquals(GsStState.FAILING, ctx.state)
 }
 
-fun validationLockEmpty(command: GsStCommand, processor: GsStOrderProcessor) = runTest {
+fun validationLockEmpty(command: GsStCommand, processor: GsStOrderProcessor) = runBizTest {
     val ctx = GsStContext(
         command = command,
         state = GsStState.NONE,
         workMode = GsStWorkMode.TEST,
-        orderRequest = GsStOrder(
-            id = GsStOrderId("123-234-abc-ABC"),
-            status = GsStStatus.CREATED,
-            gasType = GsStGasType.AI_92,
-            price = 10f,
-            quantity = 2f,
-            summaryPrice = 20f,
+        orderRequest = GsStOrderStub.prepareResult {
             lock = GsStOrderLock("")
-        )
+        }
     )
     processor.exec(ctx)
     assertEquals(1, ctx.errors.size)
@@ -71,20 +58,14 @@ fun validationLockEmpty(command: GsStCommand, processor: GsStOrderProcessor) = r
     assertContains(error?.message ?: "", "id")
 }
 
-fun validationLockFormat(command: GsStCommand, processor: GsStOrderProcessor) = runTest {
+fun validationLockFormat(command: GsStCommand, processor: GsStOrderProcessor) = runBizTest {
     val ctx = GsStContext(
         command = command,
         state = GsStState.NONE,
         workMode = GsStWorkMode.TEST,
-        orderRequest = GsStOrder(
-            id = GsStOrderId("123-234-abc-ABC"),
-            status = GsStStatus.CREATED,
-            gasType = GsStGasType.AI_92,
-            price = 10f,
-            quantity = 2f,
-            summaryPrice = 20f,
+        orderRequest = GsStOrderStub.prepareResult {
             lock = GsStOrderLock("!@#\$%^&*(),.{}")
-        )
+        }
     )
     processor.exec(ctx)
     assertEquals(1, ctx.errors.size)

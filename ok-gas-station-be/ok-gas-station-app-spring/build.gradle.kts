@@ -35,6 +35,13 @@ dependencies {
     // biz
     implementation(project(":ok-gas-station-biz"))
 
+    // DB
+    implementation(projects.okGasStationRepoStubs)
+    implementation(projects.okGasStationRepoInmemory)
+    implementation(projects.okGasStationRepoPg)
+    testImplementation(projects.okGasStationRepoCommon)
+    testImplementation(projects.okGasStationStubs)
+
     // tests
     testImplementation(kotlin("test-junit5"))
     testImplementation(libs.spring.test)

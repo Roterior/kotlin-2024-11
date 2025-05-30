@@ -13,7 +13,7 @@ abstract class RepoOrderUpdateTest {
     protected open val updateConc = initObjects[1]
     protected val updateIdNotFound = GsStOrderId("order-repo-update-not-found")
     protected val lockBad = GsStOrderLock("20000000-0000-0000-0000-000000000009")
-    protected val lockNew = GsStOrderLock("20000000-0000-0000-0000-000000000002")
+    protected val lockNew = GsStOrderLock("1")
 
     private val reqUpdateSucc by lazy {
         GsStOrder(
