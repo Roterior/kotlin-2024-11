@@ -23,3 +23,21 @@
 -H "x-client-request-id: 1235" \
 http://localhost:8080/v1/order/`
 
+## Настройка логов OpenSearch
+
+http://localhost:5601
+admin:adm-Password0
+
+Нажать Discover
+Нажать Create index pattern
+Создаем индексы: app-logs-*, cpu-load-*
+Указываем поле времени: @timestamp
+
+Тут можно создать индексы
+Management -> Dashboard Management -> Index Patterns
+Там же нужно будет обновить индекс поля чтобы можно было фильтровать по полю message
+
+## Адрес Keycloak
+
+http://localhost:8080/admin/master/console
+admin:admin
